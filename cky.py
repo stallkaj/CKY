@@ -2,7 +2,8 @@
 import sys
 
 def parse_line():
-    grammarList = []
+    tList = []
+    ntList = []
     for line in sys.stdin:
         if len(line) <= 1:
             break
@@ -14,16 +15,20 @@ def parse_line():
         
         for rhs in rhsSides:
             rhs = rhs.strip(' ').split(' ')
-            rule = {'lhs': lhs}
             if len(rhs) == 1:
-                rule['Term'] = rhs[0]
+                tList.append([lhs, rhs])
             else:
-                rule['Prod'] = rhs
+                ntList.append([lhs, rhs]) 
+    return tList, ntList
 
-         
-        grammarList.append(rule)
-    return grammarList
 
+def create_variable_list(ntList):
+
+    variableSet = set()
+    for rule in ntList:
+        variableSet.add(rule[1][0])
+        variableSet.add(rule[1][1])
+    return sorted(variableSet)
 
 def parse_sentences():
     sentences = []
@@ -32,26 +37,34 @@ def parse_sentences():
     return sentences
 
 
-init_p_matrix(grammarList, sentence):
+def init_p_matrix(tList, ntList, string, variableList):
     p={}
-    for j in range(len(sentence)):
-        for k in range(len(grammarList)):
-            if grammarList[k].get('term'):
-                p[(1,j,k)] = True  
-    for i in range(2,len(sentence)):
-        for j in range(1,len(sentence) - i):
+    for j in range(1, len(string)+1):
+        for rule in tList:
+            if string[j-1] == rule[1][0]:
+                p[(1,j,rule[0])] = rule  
+    for i in range(2,len(string)+1):
+        for j in range(1,len(string)+2 - i):
             for k in range(1, i):
-                for rule in grammarList:
-                    if rule.get('prod')
+                for rule in ntList:
+                    A = rule[0]
+                    B = rule[1][0]
+                    C = rule[1][1]
+                    if p.get((k,j,B)) and p.get((i-k,j+k,C)):
+                        p[(i,j,A)] = rule
                         
+    return p                    
                     
     
-print(parse_line(), parse_sentences())
-
-
-
-
-
+tList, ntList = parse_line()
+strings = parse_sentences()
+variableList = create_variable_list(ntList)
+print('tList:', tList)
+print('ntList:', ntList)
+print('strings', strings)
+print('variableList:', variableList)
+p = init_p_matrix(tList, ntList, strings[0], variableList)
+print(p)
 '''
 let the input be a string S consisting of n characters: a1 ... an.
 let the grammar contain r nonterminal symbols R1 ... Rr.
