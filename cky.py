@@ -42,7 +42,7 @@ def init_p_matrix(tList, ntList, string, variableList):
     for j in range(1, len(string)+1):
         for rule in tList:
             if string[j-1] == rule[1][0]:
-                p[(1,j,rule[0])] = rule  
+                p[(1,j,rule[0])] = [rule]  
     for i in range(2,len(string)+1):
         for j in range(1,len(string)+2 - i):
             for k in range(1, i):
@@ -51,22 +51,25 @@ def init_p_matrix(tList, ntList, string, variableList):
                     B = rule[1][0]
                     C = rule[1][1]
                     if p.get((k,j,B)) and p.get((i-k,j+k,C)):
-                        p[(i,j,A)] = [rule[0], [(k,j,B),(i-k,j+k,C)]]
+                        if not p.get((i,j,A)):
+                            p[(i,j,A)] = []
+                        p[(i,j,A)].append([rule[0], [(k,j,B),(i-k,j+k,C)]])
                         
     return p                    
                     
-def print_tree(node, p):
-    stepChild = p.get(node)
+def print_tree(node, p, dupFlag):
+    stepChild = p.get(node)[0]
+    if not dupFlag and len(p.get(node)) > 1:
+        dupFlag = True
+        p[node] = p[node][1:]
     if len(stepChild[1]) == 1:
-        treeString = ' (' + stepChild[0] + ' ' + stepChild[1][0] + ')'
-        return treeString
+        return ' (' + stepChild[0] + ' ' + stepChild[1][0] + ')', dupFlag
     leftChild = stepChild[1][0]
     rightChild = stepChild[1][1]
     parent = stepChild[0]
-    treeString = ' (' + parent +' '
-    treeString += print_tree(leftChild, p)
-    treeString += print_tree(rightChild, p)
-    return treeString + ')'
+    leftTemp, dupFlag = print_tree(leftChild, p, dupFlag)
+    rightTemp, dupFlag = print_tree(rightChild, p, dupFlag)
+    return ' (' + parent + leftTemp + rightTemp + ')', dupFlag
     
 
 tList, ntList = parse_line()
@@ -78,14 +81,17 @@ print('strings', strings)
 print('variableList:', variableList)
 for string in strings:
     p = init_p_matrix(tList, ntList, string, variableList)
-    #print(p)
     print(string,': ')
     root = p.get((len(string),1,'S'))
     if not root:
         print('0 parse trees')
         continue
-    treeString = print_tree((len(string),1,'S'), p)
-    print(treeString)
+    dupFlag = True
+    while dupFlag:
+        dupFlag = False
+        treeString, dupFlag = print_tree((len(string),1,'S'), p, dupFlag)
+        print(treeString)
+
 '''
 let the input be a string S consisting of n characters: a1 ... an.
 let the grammar contain r nonterminal symbols R1 ... Rr.
