@@ -51,11 +51,24 @@ def init_p_matrix(tList, ntList, string, variableList):
                     B = rule[1][0]
                     C = rule[1][1]
                     if p.get((k,j,B)) and p.get((i-k,j+k,C)):
-                        p[(i,j,A)] = rule
+                        p[(i,j,A)] = [rule[0], [(k,j,B),(i-k,j+k,C)]]
                         
     return p                    
                     
+def print_tree(node, p):
+    stepChild = p.get(node)
+    if len(stepChild[1]) == 1:
+        treeString = ' (' + stepChild[0] + ' ' + stepChild[1][0] + ')'
+        return treeString
+    leftChild = stepChild[1][0]
+    rightChild = stepChild[1][1]
+    parent = stepChild[0]
+    treeString = ' (' + parent +' '
+    treeString += print_tree(leftChild, p)
+    treeString += print_tree(rightChild, p)
+    return treeString + ')'
     
+
 tList, ntList = parse_line()
 strings = parse_sentences()
 variableList = create_variable_list(ntList)
@@ -63,8 +76,16 @@ print('tList:', tList)
 print('ntList:', ntList)
 print('strings', strings)
 print('variableList:', variableList)
-p = init_p_matrix(tList, ntList, strings[0], variableList)
-print(p)
+for string in strings:
+    p = init_p_matrix(tList, ntList, string, variableList)
+    #print(p)
+    print(string,': ')
+    root = p.get((len(string),1,'S'))
+    if not root:
+        print('0 parse trees')
+        continue
+    treeString = print_tree((len(string),1,'S'), p)
+    print(treeString)
 '''
 let the input be a string S consisting of n characters: a1 ... an.
 let the grammar contain r nonterminal symbols R1 ... Rr.
