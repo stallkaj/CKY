@@ -1,6 +1,24 @@
 #!/usr/local/bin/python3 
 import sys
 
+class pNode():
+    def __init__(self, node):
+        self.nodeList = []
+        self.add_node(node)
+        self.counter= 0
+    def len(self):
+        return len(self.nodeList)
+    def add_node(self,node):
+        self.nodeList.append(node)
+
+class Node():
+    def __init__(self,name, leftChildAdd=None, rightChildAdd=None, word=None):
+        self.name = name
+        self.leftChildAdd = leftChildAdd
+        self.rightChildAdd = rightChildAdd
+        self.word = word
+
+
 def parse_line():
     tList = []
     ntList = []
@@ -26,7 +44,7 @@ def create_variable_list(ntList):
 
     variableSet = set()
     for rule in ntList:
-        variableSet.add(rule[1][0])
+        variableSet.add(rule[1][0]) 
         variableSet.add(rule[1][1])
     return sorted(variableSet)
 
@@ -42,7 +60,8 @@ def init_p_matrix(tList, ntList, string, variableList):
     for j in range(1, len(string)+1):
         for rule in tList:
             if string[j-1] == rule[1][0]:
-                p[(1,j,rule[0])] = [rule]  
+                node = Node(rule[0], word=rule[1][0])
+                p[(1,j,rule[0])] = pNode(node)  
     for i in range(2,len(string)+1):
         for j in range(1,len(string)+2 - i):
             for k in range(1, i):
@@ -50,26 +69,29 @@ def init_p_matrix(tList, ntList, string, variableList):
                     A = rule[0]
                     B = rule[1][0]
                     C = rule[1][1]
-                    if p.get((k,j,B)) and p.get((i-k,j+k,C)):
+                    leftChildAdd = (k,j,B)
+                    rightChildAdd = (i-k,j+k,C)
+                    if p.get(leftChildAdd) and p.get(rightChildAdd):
+                        node = Node(rule[0], leftChildAdd=leftChildAdd, rightChildAdd=rightChildAdd)
                         if not p.get((i,j,A)):
-                            p[(i,j,A)] = []
-                        p[(i,j,A)].append([rule[0], [(k,j,B),(i-k,j+k,C)]])
+                            p[(i,j,A)] = pNode(node)
+                        else:
+                            p[(i,j,A)].add_node(node)
+
                         
     return p                    
                     
-def print_tree(node, p, dupFlag):
-    stepChild = p.get(node)[0]
-    if not dupFlag and len(p.get(node)) > 1:
+def print_tree(pAddress, p, dupFlag):
+    pnode = p.get(pAddress)
+    if not dupFlag and pnode.len() > 1:
         dupFlag = True
-        p[node] = p[node][1:]
-    if len(stepChild[1]) == 1:
-        return ' (' + stepChild[0] + ' ' + stepChild[1][0] + ')', dupFlag
-    leftChild = stepChild[1][0]
-    rightChild = stepChild[1][1]
-    parent = stepChild[0]
-    leftTemp, dupFlag = print_tree(leftChild, p, dupFlag)
-    rightTemp, dupFlag = print_tree(rightChild, p, dupFlag)
-    return ' (' + parent + leftTemp + rightTemp + ')', dupFlag
+        #p[node] = p[node][1:]
+    node = pnode.nodeList[0]
+    if node.word:
+        return ' (' + node.name + ' ' + node.word + ')', dupFlag
+    leftTemp, dupFlag = print_tree(node.leftChildAdd, p, dupFlag)
+    rightTemp, dupFlag = print_tree(node.rightChildAdd, p, dupFlag)
+    return ' (' + node.name + leftTemp + rightTemp + ')', dupFlag
     
 
 tList, ntList = parse_line()
@@ -87,10 +109,10 @@ for string in strings:
         print('0 parse trees')
         continue
     dupFlag = True
-    while dupFlag:
-        dupFlag = False
-        treeString, dupFlag = print_tree((len(string),1,'S'), p, dupFlag)
-        print(treeString)
+    #while dupFlag:
+    dupFlag = False
+    treeString, dupFlag = print_tree((len(string),1,'S'), p, dupFlag)
+    print(treeString)
 
 '''
 let the input be a string S consisting of n characters: a1 ... an.
