@@ -1,0 +1,11 @@
+a + b * c: 2 parse trees
+(E (E a) (PE (P +) (E (E b) (PE (P *) (E c)))))
+(E (E (E a) (PE (P +) (E b))) (PE (P *) (E c)))
+
+a + b + c: 2 parse trees
+(E (E a) (PE (P +) (E (E b) (PE (P +) (E c)))))
+(E (E (E a) (PE (P +) (E b))) (PE (P +) (E c)))
+
+a + b * c + a * c + a + b * c + a * c * a + b * c + a * c + a + b * c + a * c: 1767263190 parse trees
+(E (E a) (PE (P +) (E (E b) (PE (P *) (E (E c) (PE (P +) (E (E a) (PE (P *) (E (E c) (PE (P +) (E (E a) (PE (P +) (E (E b) (PE (P *) (E (E c) (PE (P +) (E (E a) (PE (P *) (E (E c) (PE (P *) (E (E a) (PE (P +) (E (E b) (PE (P *) (E (E c) (PE (P +) (E (E a) (PE (P *) (E (E c) (PE (P +) (E (E a) (PE (P +) (E (E b) (PE (P *) (E (E c) (PE (P +) (E (E a) (PE (P *) (E c)))))))))))))))))))))))))))))))))))))))
+(E (E a) (PE (P +) (E (E b) (PE (P *) (E (E c) (PE (P +) (E (E a) (PE (P *) (E (E c) (PE (P +) (E (E a) (PE (P +) (E (E b) (PE (P *) (E (E c) (PE (P +) (E (E a) (PE (P *) (E (E c) (PE (P *) (E (E a) (PE (P +) (E (E b) (PE (P *) (E (E c) (PE (P +) (E (E a) (PE (P *) (E (E c) (PE (P +) (E (E a) (PE (P +) (E (E b) (PE (P *) (E (E (E c) (PE (P +) (E a))) (PE (P *) (E c)))))))))))))))))))))))))))))))))))))

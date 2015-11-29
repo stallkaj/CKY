@@ -1,0 +1,34 @@
+a b a b: 1 parse tree
+(S (S (A a) (B b)) (S (A a) (B b)))
+
+a a b b: 1 parse tree
+(S (A a) (C (S (A a) (B b)) (B b)))
+
+a b a b a b: 2 parse trees
+(S (S (A a) (B b)) (S (S (A a) (B b)) (S (A a) (B b))))
+(S (S (S (A a) (B b)) (S (A a) (B b))) (S (A a) (B b)))
+
+a a: 0 parse trees
+
+a b: 1 parse tree
+(S (A a) (B b))
+
+b b: 0 parse trees
+
+a a a b b b: 1 parse tree
+(S (A a) (C (S (A a) (C (S (A a) (B b)) (B b))) (B b)))
+
+a a a b a b a b b b: 2 parse trees
+(S (A a) (C (S (A a) (C (S (S (A a) (B b)) (S (S (A a) (B b)) (S (A a) (B b)))) (B b))) (B b)))
+(S (A a) (C (S (A a) (C (S (S (S (A a) (B b)) (S (A a) (B b))) (S (A a) (B b))) (B b))) (B b)))
+
+a b a b a b a b a b a b: 42 parse trees
+(S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (A a) (B b)))))))
+(S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (S (A a) (B b)) (S (A a) (B b))) (S (A a) (B b))))))
+
+a b a b a b a b a b a b a b a b a b a b a b a b a b a b a b a b a b a b: 129644790 parse trees
+(S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (A a) (B b)))))))))))))))))))
+(S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (A a) (B b)) (S (S (S (A a) (B b)) (S (A a) (B b))) (S (A a) (B b))))))))))))))))))
+
+a a a a a a b b b b b b: 1 parse tree
+(S (A a) (C (S (A a) (C (S (A a) (C (S (A a) (C (S (A a) (C (S (A a) (B b)) (B b))) (B b))) (B b))) (B b))) (B b)))

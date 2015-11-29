@@ -1,0 +1,7 @@
+E -> E EP | a | b | c
+EP -> E P
+P -> + | *
+
+a b c + *
+a b + c *
+a b + c * a + b *

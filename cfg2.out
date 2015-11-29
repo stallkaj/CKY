@@ -1,0 +1,8 @@
+a b c + *: 1 parse tree
+(E (E a) (EP (E (E b) (EP (E c) (P +))) (P *)))
+
+a b + c *: 1 parse tree
+(E (E (E a) (EP (E b) (P +))) (EP (E c) (P *)))
+
+a b + c * a + b *: 1 parse tree
+(E (E (E (E (E a) (EP (E b) (P +))) (EP (E c) (P *))) (EP (E a) (P +))) (EP (E b) (P *)))

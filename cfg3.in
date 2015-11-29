@@ -1,0 +1,7 @@
+E -> E PE | a | b | c
+PE -> P E
+P -> + | *
+
+a + b * c
+a + b + c
+a + b * c + a * c + a + b * c + a * c * a + b * c + a * c + a + b * c + a * c
