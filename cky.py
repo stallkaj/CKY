@@ -2,14 +2,21 @@
 import sys
 
 class pNode():
-    def __init__(self, node):
+    def __init__(self, node, counter=0):
         self.nodeList = []
         self.add_node(node)
-        self.counter= 0
+        self.counter= counter
+        self.index = 0
     def len(self):
         return len(self.nodeList)
     def add_node(self,node):
+        
         self.nodeList.append(node)
+    def get_node(self):
+        rv = self.nodeList[self.index]
+        if len(self.nodeList) > 1:
+            self.index = (self.index + 1) % len(self.nodeList)
+        return rv
 
 class Node():
     def __init__(self,name, leftChildAdd=None, rightChildAdd=None, word=None):
@@ -61,7 +68,7 @@ def init_p_matrix(tList, ntList, string, variableList):
         for rule in tList:
             if string[j-1] == rule[1][0]:
                 node = Node(rule[0], word=rule[1][0])
-                p[(1,j,rule[0])] = pNode(node)  
+                p[(1,j,rule[0])] = pNode(node,counter=1)
     for i in range(2,len(string)+1):
         for j in range(1,len(string)+2 - i):
             for k in range(1, i):
@@ -77,7 +84,7 @@ def init_p_matrix(tList, ntList, string, variableList):
                             p[(i,j,A)] = pNode(node)
                         else:
                             p[(i,j,A)].add_node(node)
-
+                        p[(i,j,A)].counter += p[leftChildAdd].counter * p[rightChildAdd].counter
                         
     return p                    
                     
@@ -86,7 +93,7 @@ def print_tree(pAddress, p, dupFlag):
     if not dupFlag and pnode.len() > 1:
         dupFlag = True
         #p[node] = p[node][1:]
-    node = pnode.nodeList[0]
+    node = pnode.get_node()
     if node.word:
         return ' (' + node.name + ' ' + node.word + ')', dupFlag
     leftTemp, dupFlag = print_tree(node.leftChildAdd, p, dupFlag)
@@ -97,22 +104,36 @@ def print_tree(pAddress, p, dupFlag):
 tList, ntList = parse_line()
 strings = parse_sentences()
 variableList = create_variable_list(ntList)
-print('tList:', tList)
-print('ntList:', ntList)
-print('strings', strings)
-print('variableList:', variableList)
+#print('tList:', tList)
+#print('ntList:', ntList)
+#print('strings', strings)
+#print('variableList:', variableList)
+firstLine = True
 for string in strings:
+    if not firstLine:
+        print()
+    firstLine = False
     p = init_p_matrix(tList, ntList, string, variableList)
-    print(string,': ')
+    outputString = ' '.join(string) + ': '
     root = p.get((len(string),1,'S'))
     if not root:
-        print('0 parse trees')
-        continue
-    dupFlag = True
-    #while dupFlag:
-    dupFlag = False
-    treeString, dupFlag = print_tree((len(string),1,'S'), p, dupFlag)
-    print(treeString)
+        outputString += '0 parse trees'
+    else:
+        if root.counter == 1:
+            outputString += '1 parse tree'
+        else:
+            outputString += str(root.counter) + ' parse trees'
+        dupFlag = True
+        #while dupFlag:
+        dupFlag = False
+        tempString, dupFlag = print_tree((len(string),1,'S'), p, dupFlag)
+        outputString += '\n' + tempString[1:]
+
+        if root.counter > 1:
+            tempString, dupFlag = print_tree((len(string),1,'S'), p, dupFlag)
+            outputString += '\n' + tempString[1:]
+    print(outputString)
+
 
 '''
 let the input be a string S consisting of n characters: a1 ... an.
